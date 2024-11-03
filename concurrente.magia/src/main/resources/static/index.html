@@ -102,6 +102,33 @@
                 opacity: 0;
             }
         }
+
+        /* Estilo y animación para las figuritas de los magos */
+        .magos-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            gap: 100px;
+        }
+
+        .mago {
+            width: 100px;
+            transition: transform 0.2s;
+        }
+
+        /* Animación de agitación */
+        .mago.agitado {
+            animation: agitacion 0.2s ease-out;
+        }
+
+        @keyframes agitacion {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
     </style>
 </head>
 <body>
@@ -138,6 +165,12 @@
 <!-- Contenedor para el rayo -->
 <div class="rayo" id="rayo"></div>
 
+<!-- Contenedor para las figuritas de los magos -->
+<div class="magos-container">
+    <img src="mago-azul.png" alt="Mago Azul" id="mago-azul" class="mago">
+    <img src="mago-rojo.png" alt="Mago Rojo" id="mago-rojo" class="mago">
+</div>
+
 <script>
     const hechizos1 = [
         { nombre: "Expelliarmus", tipo: "Defensivo", nivel: 2, desbloqueado: true },
@@ -157,70 +190,18 @@
     function mostrarRayo() {
         const rayo = document.getElementById("rayo");
         rayo.style.opacity = "1";
-        rayo.style.animation = "none"; // Reinicia la animación
+        rayo.style.animation = "none";
         setTimeout(() => {
-            rayo.style.animation = ""; // Vuelve a aplicar la animación
+            rayo.style.animation = "";
         }, 10);
     }
 
-    function actualizarBarraDeVida(jugador) {
-        const barra = document.getElementById("vida-barra" + jugador);
-        const vidaRestante = document.getElementById("vida-restante" + jugador);
-        const vida = jugador === 1 ? vida1 : vida2;
-        barra.style.width = vida + "%";
-        vidaRestante.textContent = "Vida: " + vida;
-    }
-
-    function actualizarVictorias() {
-        document.getElementById("victorias-jugador1").textContent = `Victorias: ${victorias1}`;
-        document.getElementById("victorias-jugador2").textContent = `Victorias: ${victorias2}`;
-        desbloquearHechizos();
-    }
-
-    function actualizarPocimas() {
-        document.getElementById("pocimas-jugador1").textContent = `Pócimas restantes: ${pocimas1}`;
-        document.getElementById("pocimas-jugador2").textContent = `Pócimas restantes: ${pocimas2}`;
-        document.getElementById("boton-pocion1").disabled = pocimas1 === 0;
-        document.getElementById("boton-pocion2").disabled = pocimas2 === 0;
-    }
-
-    function cargarHechizos() {
-        const lista1 = document.getElementById("hechizos-lista1");
-        const lista2 = document.getElementById("hechizos-lista2");
-        lista1.innerHTML = '';
-        lista2.innerHTML = '';
-
-        hechizos1.forEach((hechizo, index) => {
-            const item = document.createElement("li");
-            item.textContent = `${hechizo.nombre} - Tipo: ${hechizo.tipo} - Nivel: ${hechizo.nivel}`;
-            if (!hechizo.desbloqueado) item.classList.add("bloqueado");
-            item.onclick = () => usarHechizo(1, hechizo, index);
-            lista1.appendChild(item);
-        });
-
-        hechizos2.forEach((hechizo, index) => {
-            const item = document.createElement("li");
-            item.textContent = `${hechizo.nombre} - Tipo: ${hechizo.tipo} - Nivel: ${hechizo.nivel}`;
-            if (!hechizo.desbloqueado) item.classList.add("bloqueado");
-            item.onclick = () => usarHechizo(2, hechizo, index);
-            lista2.appendChild(item);
-        });
-    }
-
-    function desbloquearHechizos() {
-        hechizos1.forEach(hechizo => {
-            if (!hechizo.desbloqueado && victorias1 >= hechizo.victoriasNecesarias) {
-                hechizo.desbloqueado = true;
-            }
-        });
-
-        hechizos2.forEach(hechizo => {
-            if (!hechizo.desbloqueado && victorias2 >= hechizo.victoriasNecesarias) {
-                hechizo.desbloqueado = true;
-            }
-        });
-
-        cargarHechizos();
+    function agitarMago(jugador) {
+        const mago = jugador === 1 ? document.getElementById("mago-rojo") : document.getElementById("mago-azul");
+        mago.classList.add("agitado");
+        setTimeout(() => {
+            mago.classList.remove("agitado");
+        }, 200); // Duración de la agitación
     }
 
     function usarHechizo(jugador, hechizo, index) {
@@ -233,8 +214,8 @@
             return;
         }
 
-        // Mostrar el rayo en la pantalla
-        mostrarRayo();
+        mostrarRayo(); // Mostrar el rayo en pantalla
+        agitarMago(jugador === 1 ? 2 : 1); // Agitar el mago que recibe el daño
 
         const daño = hechizo.nivel * 5;
         if (jugador === 1) vida2 -= daño;
@@ -266,22 +247,47 @@
         }
     }
 
-    function usarPocion(jugador) {
-        if ((jugador === 1 && pocimas1 > 0) || (jugador === 2 && pocimas2 > 0)) {
-            if (jugador === 1) {
-                vida1 += 20;
-                pocimas1--;
-            } else {
-                vida2 += 20;
-                pocimas2--;
-            }
+    function actualizarBarraDeVida(jugador) {
+        const barra = document.getElementById("vida-barra" + jugador);
+        const vidaRestante = document.getElementById("vida-restante" + jugador);
+        const vida = jugador === 1 ? vida1 : vida2;
+        barra.style.width = vida + "%";
+        vidaRestante.textContent = "Vida: " + vida;
+    }
 
-            if (jugador === 1 && vida1 > 100) vida1 = 100;
-            if (jugador === 2 && vida2 > 100) vida2 = 100;
+    function cargarHechizos() {
+        const lista1 = document.getElementById("hechizos-lista1");
+        const lista2 = document.getElementById("hechizos-lista2");
+        lista1.innerHTML = '';
+        lista2.innerHTML = '';
 
-            actualizarBarraDeVida(jugador);
-            actualizarPocimas();
-        }
+        hechizos1.forEach((hechizo, index) => {
+            const item = document.createElement("li");
+            item.textContent = `${hechizo.nombre} - Tipo: ${hechizo.tipo} - Nivel: ${hechizo.nivel}`;
+            if (!hechizo.desbloqueado) item.classList.add("bloqueado");
+            item.onclick = () => usarHechizo(1, hechizo, index);
+            lista1.appendChild(item);
+        });
+
+        hechizos2.forEach((hechizo, index) => {
+            const item = document.createElement("li");
+            item.textContent = `${hechizo.nombre} - Tipo: ${hechizo.tipo} - Nivel: ${hechizo.nivel}`;
+            if (!hechizo.desbloqueado) item.classList.add("bloqueado");
+            item.onclick = () => usarHechizo(2, hechizo, index);
+            lista2.appendChild(item);
+        });
+    }
+
+    function actualizarVictorias() {
+        document.getElementById("victorias-jugador1").textContent = `Victorias: ${victorias1}`;
+        document.getElementById("victorias-jugador2").textContent = `Victorias: ${victorias2}`;
+    }
+
+    function actualizarPocimas() {
+        document.getElementById("pocimas-jugador1").textContent = `Pócimas restantes: ${pocimas1}`;
+        document.getElementById("pocimas-jugador2").textContent = `Pócimas restantes: ${pocimas2}`;
+        document.getElementById("boton-pocion1").disabled = pocimas1 === 0;
+        document.getElementById("boton-pocion2").disabled = pocimas2 === 0;
     }
 
     cargarHechizos();
