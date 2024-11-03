@@ -75,10 +75,12 @@
         <div class="vida-barra" id="vida-barra1"></div>
     </div>
     <p id="vida-restante1">Vida: 100</p>
+    <p id="victorias-jugador1">Victorias: 0</p>
+    <p id="pocimas-jugador1">Pócimas restantes: 3</p>
 
     <h3>Lista de Hechizos</h3>
     <ul class="hechizos-lista" id="hechizos-lista1"></ul>
-    <button class="boton-pocion" onclick="usarPocion(1)">Usar Pócima</button>
+    <button class="boton-pocion" id="boton-pocion1" onclick="usarPocion(1)">Usar Pócima</button>
 </div>
 
 <div class="container" id="jugador2">
@@ -88,10 +90,12 @@
         <div class="vida-barra" id="vida-barra2"></div>
     </div>
     <p id="vida-restante2">Vida: 100</p>
+    <p id="victorias-jugador2">Victorias: 0</p>
+    <p id="pocimas-jugador2">Pócimas restantes: 3</p>
 
     <h3>Lista de Hechizos</h3>
     <ul class="hechizos-lista" id="hechizos-lista2"></ul>
-    <button class="boton-pocion" onclick="usarPocion(2)">Usar Pócima</button>
+    <button class="boton-pocion" id="boton-pocion2" onclick="usarPocion(2)">Usar Pócima</button>
 </div>
 
 <script>
@@ -106,6 +110,8 @@
     ];
 
     let vida1 = 100, vida2 = 100;
+    let victorias1 = 0, victorias2 = 0;
+    let pocimas1 = 3, pocimas2 = 3;
     let turnoJugador = 1;
 
     function actualizarBarraDeVida(jugador) {
@@ -114,6 +120,18 @@
         const vida = jugador === 1 ? vida1 : vida2;
         barra.style.width = vida + "%";
         vidaRestante.textContent = "Vida: " + vida;
+    }
+
+    function actualizarVictorias() {
+        document.getElementById("victorias-jugador1").textContent = `Victorias: ${victorias1}`;
+        document.getElementById("victorias-jugador2").textContent = `Victorias: ${victorias2}`;
+    }
+
+    function actualizarPocimas() {
+        document.getElementById("pocimas-jugador1").textContent = `Pócimas restantes: ${pocimas1}`;
+        document.getElementById("pocimas-jugador2").textContent = `Pócimas restantes: ${pocimas2}`;
+        document.getElementById("boton-pocion1").disabled = pocimas1 === 0;
+        document.getElementById("boton-pocion2").disabled = pocimas2 === 0;
     }
 
     function cargarHechizos() {
@@ -151,25 +169,43 @@
         turnoJugador = jugador === 1 ? 2 : 1;
 
         if (vida1 <= 0 || vida2 <= 0) {
+            if (vida1 <= 0) victorias2++;
+            if (vida2 <= 0) victorias1++;
+
             alert(`Jugador ${jugador} ha ganado!`);
-            vida1 = 100; vida2 = 100;
+            vida1 = 100;
+            vida2 = 100;
+
+            actualizarVictorias();
+            actualizarPocimas();
             actualizarBarraDeVida(1);
             actualizarBarraDeVida(2);
         }
     }
 
     function usarPocion(jugador) {
-        if (jugador === 1) vida1 += 20;
-        else vida2 += 20;
+        if ((jugador === 1 && pocimas1 > 0) || (jugador === 2 && pocimas2 > 0)) {
+            if (jugador === 1) {
+                vida1 += 20;
+                pocimas1--;
+            } else {
+                vida2 += 20;
+                pocimas2--;
+            }
 
-        if (jugador === 1 && vida1 > 100) vida1 = 100;
-        if (jugador === 2 && vida2 > 100) vida2 = 100;
-        actualizarBarraDeVida(jugador);
+            if (jugador === 1 && vida1 > 100) vida1 = 100;
+            if (jugador === 2 && vida2 > 100) vida2 = 100;
+
+            actualizarBarraDeVida(jugador);
+            actualizarPocimas();
+        }
     }
 
     cargarHechizos();
     actualizarBarraDeVida(1);
     actualizarBarraDeVida(2);
+    actualizarVictorias();
+    actualizarPocimas();
 </script>
 </body>
 </html>
