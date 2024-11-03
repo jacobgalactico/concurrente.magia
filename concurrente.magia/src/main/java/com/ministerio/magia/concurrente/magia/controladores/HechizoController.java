@@ -15,21 +15,29 @@ public class HechizoController {
     @Autowired
     private HechizoService hechizoService;
 
+    // Endpoint para crear un nuevo hechizo
     @PostMapping
     public Hechizo crearHechizo(@RequestBody Hechizo hechizo) {
         return hechizoService.crearHechizo(hechizo);
     }
 
+    // Endpoint para obtener un hechizo por ID
     @GetMapping("/{id}")
-    public Optional<Hechizo> obtenerHechizo(@PathVariable Long id) {
+    public Optional<Hechizo> obtenerHechizoPorId(@PathVariable Long id) {
         return hechizoService.obtenerHechizoPorId(id);
     }
 
-    @PostMapping("/{id}/ejecutar")
-    public Hechizo ejecutarHechizo(@PathVariable Long id, @RequestParam String ejecutadoPor) {
-        return hechizoService.ejecutarHechizo(id, ejecutadoPor);
+    // Endpoint para ejecutar un hechizo por un jugador
+    @PostMapping("/ejecutar/{id}")
+    public Hechizo ejecutarHechizo(
+            @PathVariable Long id,
+            @RequestParam int jugador,
+            @RequestParam String ejecutadoPor
+    ) {
+        return hechizoService.ejecutarHechizo(id, jugador, ejecutadoPor);
     }
 
+    // Endpoint para obtener todos los hechizos
     @GetMapping
     public List<Hechizo> obtenerTodosHechizos() {
         return hechizoService.obtenerTodosHechizos();

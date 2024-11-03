@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ministerio de Magia - Juego de Hechizos</title>
+    <title>Ministerio de Magia - Juego de Hechizos para Dos Jugadores</title>
     <style>
-        /* Estilo de fondo */
         body {
             margin: 0;
             padding: 0;
@@ -15,23 +14,19 @@
             background-position: center;
             color: white;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
         }
 
-        /* Contenedor principal */
         .container {
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.7);
             padding: 20px;
             border-radius: 8px;
-            width: 80%;
-            max-width: 600px;
+            width: 40%;
             text-align: center;
         }
 
-        /* Barra de vida */
         .vida-container {
             margin-top: 20px;
             width: 100%;
@@ -43,11 +38,10 @@
         .vida-barra {
             height: 20px;
             background-color: #4caf50;
-            width: 100%; /* Inicialmente al 100% */
+            width: 100%;
             transition: width 0.5s;
         }
 
-        /* Lista de hechizos */
         .hechizos-lista {
             list-style: none;
             padding: 0;
@@ -58,97 +52,124 @@
             padding: 10px;
             background-color: rgba(255, 255, 255, 0.2);
             border-radius: 5px;
+            cursor: pointer;
         }
 
-        /* Botón de agregar hechizo */
-        .boton-agregar {
+        .boton-pocion {
             margin-top: 20px;
             padding: 10px 20px;
-            background-color: #ff6347;
+            background-color: #00bfff;
             border: none;
             border-radius: 5px;
             color: white;
             cursor: pointer;
-            font-size: 16px;
         }
 
-        .boton-agregar:hover {
-            background-color: #ff4500;
-        }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>Bienvenido al Ministerio de Magia</h1>
-
-    <!-- Barra de vida -->
-    <h3>Vida del personaje</h3>
+<div class="container" id="jugador1">
+    <h1>Jugador 1</h1>
+    <h3>Vida</h3>
     <div class="vida-container">
-        <div class="vida-barra" id="vida-barra"></div>
+        <div class="vida-barra" id="vida-barra1"></div>
     </div>
-    <p id="vida-restante">Vida: 100</p>
+    <p id="vida-restante1">Vida: 100</p>
 
-    <!-- Lista de Hechizos -->
-    <h2>Lista de Hechizos</h2>
-    <ul class="hechizos-lista" id="hechizos-lista"></ul>
-    <button class="boton-agregar" onclick="agregarHechizo()">Añadir nuevo hechizo</button>
+    <h3>Lista de Hechizos</h3>
+    <ul class="hechizos-lista" id="hechizos-lista1"></ul>
+    <button class="boton-pocion" onclick="usarPocion(1)">Usar Pócima</button>
+</div>
+
+<div class="container" id="jugador2">
+    <h1>Jugador 2</h1>
+    <h3>Vida</h3>
+    <div class="vida-container">
+        <div class="vida-barra" id="vida-barra2"></div>
+    </div>
+    <p id="vida-restante2">Vida: 100</p>
+
+    <h3>Lista de Hechizos</h3>
+    <ul class="hechizos-lista" id="hechizos-lista2"></ul>
+    <button class="boton-pocion" onclick="usarPocion(2)">Usar Pócima</button>
 </div>
 
 <script>
-    // Datos de ejemplo de hechizos
-    const hechizos = [
+    const hechizos1 = [
         { nombre: "Expelliarmus", tipo: "Defensivo", nivel: 2 },
-        { nombre: "Expecto Patronum", tipo: "Defensivo", nivel: 5 },
-        { nombre: "Avada Kedavra", tipo: "Ofensivo", nivel: 10 }
+        { nombre: "Expecto Patronum", tipo: "Defensivo", nivel: 5 }
     ];
 
-    let vida = 100;
+    const hechizos2 = [
+        { nombre: "Expelliarmus", tipo: "Defensivo", nivel: 2 },
+        { nombre: "Expecto Patronum", tipo: "Defensivo", nivel: 5 }
+    ];
 
-    function actualizarBarraDeVida() {
-        const barra = document.getElementById("vida-barra");
-        const vidaRestante = document.getElementById("vida-restante");
+    let vida1 = 100, vida2 = 100;
+    let turnoJugador = 1;
+
+    function actualizarBarraDeVida(jugador) {
+        const barra = document.getElementById("vida-barra" + jugador);
+        const vidaRestante = document.getElementById("vida-restante" + jugador);
+        const vida = jugador === 1 ? vida1 : vida2;
         barra.style.width = vida + "%";
         vidaRestante.textContent = "Vida: " + vida;
     }
 
     function cargarHechizos() {
-        const lista = document.getElementById("hechizos-lista");
-        lista.innerHTML = "";
+        const lista1 = document.getElementById("hechizos-lista1");
+        const lista2 = document.getElementById("hechizos-lista2");
 
-        hechizos.forEach(hechizo => {
+        hechizos1.forEach(hechizo => {
             const item = document.createElement("li");
             item.textContent = `${hechizo.nombre} - Tipo: ${hechizo.tipo} - Nivel: ${hechizo.nivel}`;
-            item.onclick = () => usarHechizo(hechizo);
-            lista.appendChild(item);
+            item.onclick = () => usarHechizo(1, hechizo);
+            lista1.appendChild(item);
+        });
+
+        hechizos2.forEach(hechizo => {
+            const item = document.createElement("li");
+            item.textContent = `${hechizo.nombre} - Tipo: ${hechizo.tipo} - Nivel: ${hechizo.nivel}`;
+            item.onclick = () => usarHechizo(2, hechizo);
+            lista2.appendChild(item);
         });
     }
 
-    function usarHechizo(hechizo) {
-        const daño = hechizo.nivel * 5;
-        vida -= daño;
-        if (vida < 0) vida = 0;
-        actualizarBarraDeVida();
+    function usarHechizo(jugador, hechizo) {
+        if (turnoJugador !== jugador) {
+            alert("No es tu turno");
+            return;
+        }
 
-        if (vida === 0) {
-            alert("El personaje ha sido derrotado.");
+        const daño = hechizo.nivel * 5;
+        if (jugador === 1) vida2 -= daño;
+        else vida1 -= daño;
+
+        actualizarBarraDeVida(1);
+        actualizarBarraDeVida(2);
+
+        turnoJugador = jugador === 1 ? 2 : 1;
+
+        if (vida1 <= 0 || vida2 <= 0) {
+            alert(`Jugador ${jugador} ha ganado!`);
+            vida1 = 100; vida2 = 100;
+            actualizarBarraDeVida(1);
+            actualizarBarraDeVida(2);
         }
     }
 
-    function agregarHechizo() {
-        const nombre = prompt("Nombre del hechizo:");
-        const tipo = prompt("Tipo de hechizo (Defensivo/Ofensivo):");
-        const nivel = prompt("Nivel de dificultad (1-10):");
+    function usarPocion(jugador) {
+        if (jugador === 1) vida1 += 20;
+        else vida2 += 20;
 
-        if (nombre && tipo && nivel) {
-            hechizos.push({ nombre, tipo, nivel: parseInt(nivel) });
-            cargarHechizos();
-        } else {
-            alert("Por favor, completa todos los datos del hechizo.");
-        }
+        if (jugador === 1 && vida1 > 100) vida1 = 100;
+        if (jugador === 2 && vida2 > 100) vida2 = 100;
+        actualizarBarraDeVida(jugador);
     }
 
     cargarHechizos();
-    actualizarBarraDeVida();
+    actualizarBarraDeVida(1);
+    actualizarBarraDeVida(2);
 </script>
 </body>
 </html>
