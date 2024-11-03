@@ -1,24 +1,25 @@
 const hechizos1 = [
-    { nombre: "Expelliarmus", tipo: "Defensivo", nivel: 2, desbloqueado: true },
-    { nombre: "Expecto Patronum", tipo: "Defensivo", nivel: 5, desbloqueado: true },
-    { nombre: "Sectumsempra", tipo: "Ofensivo", nivel: 6, desbloqueado: false, victoriasNecesarias: 1 },
-    { nombre: "Crucio", tipo: "Ofensivo", nivel: 8, desbloqueado: false, victoriasNecesarias: 2 },
-    { nombre: "Avada Kedavra", tipo: "Ofensivo", nivel: 10, desbloqueado: false, victoriasNecesarias: 3 }
+    { nombre: "Expelliarmus", tipo: "Defensivo", nivel: 2, desbloqueado: true, color: "#FF5733" }, // Naranja
+    { nombre: "Expecto Patronum", tipo: "Defensivo", nivel: 5, desbloqueado: true, color: "#33FFDD" }, // Turquesa
+    { nombre: "Sectumsempra", tipo: "Ofensivo", nivel: 6, desbloqueado: false, victoriasNecesarias: 1, color: "#FF33FF" }, // Morado
+    { nombre: "Crucio", tipo: "Ofensivo", nivel: 8, desbloqueado: false, victoriasNecesarias: 2, color: "#FF3333" }, // Rojo
+    { nombre: "Avada Kedavra", tipo: "Ofensivo", nivel: 10, desbloqueado: false, victoriasNecesarias: 3, color: "#33FF57" } // Verde
 ];
 
-const hechizos2 = JSON.parse(JSON.stringify(hechizos1));
+const hechizos2 = JSON.parse(JSON.stringify(hechizos1)); // Clona los hechizos para el segundo jugador
 
 let vida1 = 100, vida2 = 100;
 let victorias1 = 0, victorias2 = 0;
 let pocimas1 = 3, pocimas2 = 3;
 let turnoJugador = 1;
 
-function mostrarRayo() {
+function mostrarRayo(color) {
     const rayo = document.getElementById("rayo");
+    rayo.style.background = `linear-gradient(to bottom, rgba(255, 255, 255, 0), ${color}, rgba(255, 255, 255, 0))`;
     rayo.style.opacity = "1";
     rayo.style.animation = "none";
     setTimeout(() => {
-        rayo.style.animation = "";
+        rayo.style.animation = ""; // Reinicia la animación
     }, 10);
 }
 
@@ -40,8 +41,8 @@ function usarHechizo(jugador, hechizo, index) {
         return;
     }
 
-    mostrarRayo();
-    agitarMago(jugador === 1 ? 2 : 1);
+    mostrarRayo(hechizo.color); // Pasamos el color del hechizo al rayo
+    agitarMago(jugador === 1 ? 2 : 1); // Agitar el mago que recibe el daño
 
     const daño = hechizo.nivel * 5;
     if (jugador === 1) vida2 -= daño;
@@ -56,10 +57,12 @@ function usarHechizo(jugador, hechizo, index) {
         if (vida1 <= 0) {
             victorias2++;
             pocimas2++;
+            desbloquearHechizos(2); // Desbloquear hechizos para el jugador 2
         }
         if (vida2 <= 0) {
             victorias1++;
             pocimas1++;
+            desbloquearHechizos(1); // Desbloquear hechizos para el jugador 1
         }
 
         alert(`Jugador ${jugador} ha ganado!`);
@@ -69,8 +72,19 @@ function usarHechizo(jugador, hechizo, index) {
         actualizarVictorias();
         actualizarPocimas();
         actualizarBarraDeVida(1);
-        actualizarBarraDeVida(2);
+        cargarHechizos(); // Recargar la lista de hechizos para actualizar el estado de bloqueo
     }
+}
+
+function desbloquearHechizos(jugador) {
+    const hechizos = jugador === 1 ? hechizos1 : hechizos2;
+    const victorias = jugador === 1 ? victorias1 : victorias2;
+
+    hechizos.forEach(hechizo => {
+        if (!hechizo.desbloqueado && victorias >= hechizo.victoriasNecesarias) {
+            hechizo.desbloqueado = true;
+        }
+    });
 }
 
 function actualizarBarraDeVida(jugador) {
