@@ -53,6 +53,12 @@
             background-color: rgba(255, 255, 255, 0.2);
             border-radius: 5px;
             cursor: pointer;
+            position: relative;
+        }
+
+        .bloqueado {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .boton-pocion {
@@ -100,14 +106,14 @@
 
 <script>
     const hechizos1 = [
-        { nombre: "Expelliarmus", tipo: "Defensivo", nivel: 2 },
-        { nombre: "Expecto Patronum", tipo: "Defensivo", nivel: 5 }
+        { nombre: "Expelliarmus", tipo: "Defensivo", nivel: 2, desbloqueado: true },
+        { nombre: "Expecto Patronum", tipo: "Defensivo", nivel: 5, desbloqueado: true },
+        { nombre: "Sectumsempra", tipo: "Ofensivo", nivel: 6, desbloqueado: false, victoriasNecesarias: 1 },
+        { nombre: "Crucio", tipo: "Ofensivo", nivel: 8, desbloqueado: false, victoriasNecesarias: 2 },
+        { nombre: "Avada Kedavra", tipo: "Ofensivo", nivel: 10, desbloqueado: false, victoriasNecesarias: 3 }
     ];
 
-    const hechizos2 = [
-        { nombre: "Expelliarmus", tipo: "Defensivo", nivel: 2 },
-        { nombre: "Expecto Patronum", tipo: "Defensivo", nivel: 5 }
-    ];
+    const hechizos2 = JSON.parse(JSON.stringify(hechizos1)); // Clona los hechizos para el segundo jugador
 
     let vida1 = 100, vida2 = 100;
     let victorias1 = 0, victorias2 = 0;
@@ -125,6 +131,7 @@
     function actualizarVictorias() {
         document.getElementById("victorias-jugador1").textContent = `Victorias: ${victorias1}`;
         document.getElementById("victorias-jugador2").textContent = `Victorias: ${victorias2}`;
+        desbloquearHechizos();
     }
 
     function actualizarPocimas() {
@@ -137,25 +144,49 @@
     function cargarHechizos() {
         const lista1 = document.getElementById("hechizos-lista1");
         const lista2 = document.getElementById("hechizos-lista2");
+        lista1.innerHTML = '';
+        lista2.innerHTML = '';
 
-        hechizos1.forEach(hechizo => {
+        hechizos1.forEach((hechizo, index) => {
             const item = document.createElement("li");
             item.textContent = `${hechizo.nombre} - Tipo: ${hechizo.tipo} - Nivel: ${hechizo.nivel}`;
-            item.onclick = () => usarHechizo(1, hechizo);
+            if (!hechizo.desbloqueado) item.classList.add("bloqueado");
+            item.onclick = () => usarHechizo(1, hechizo, index);
             lista1.appendChild(item);
         });
 
-        hechizos2.forEach(hechizo => {
+        hechizos2.forEach((hechizo, index) => {
             const item = document.createElement("li");
             item.textContent = `${hechizo.nombre} - Tipo: ${hechizo.tipo} - Nivel: ${hechizo.nivel}`;
-            item.onclick = () => usarHechizo(2, hechizo);
+            if (!hechizo.desbloqueado) item.classList.add("bloqueado");
+            item.onclick = () => usarHechizo(2, hechizo, index);
             lista2.appendChild(item);
         });
     }
 
-    function usarHechizo(jugador, hechizo) {
+    function desbloquearHechizos() {
+        hechizos1.forEach(hechizo => {
+            if (!hechizo.desbloqueado && victorias1 >= hechizo.victoriasNecesarias) {
+                hechizo.desbloqueado = true;
+            }
+        });
+
+        hechizos2.forEach(hechizo => {
+            if (!hechizo.desbloqueado && victorias2 >= hechizo.victoriasNecesarias) {
+                hechizo.desbloqueado = true;
+            }
+        });
+
+        cargarHechizos();
+    }
+
+    function usarHechizo(jugador, hechizo, index) {
         if (turnoJugador !== jugador) {
             alert("No es tu turno");
+            return;
+        }
+        if (!hechizo.desbloqueado) {
+            alert("Este hechizo está bloqueado");
             return;
         }
 
