@@ -2,6 +2,8 @@
 
 Participantes: Jacob Altenburger Villar, Pablo Barbosa Ojeda, Assil, Augusto Perrone, Pedro Velasco
 
+Link al repositorio: https://github.com/jacobgalactico/concurrente.magia
+
 Este repositorio contiene el backend del sistema avanzado de gestión de hechizos y eventos mágicos para el Ministerio de Magia. Está desarrollado con Spring Boot y es responsable de gestionar la autenticación, el control de acceso, el procesamiento concurrente de datos y las notificaciones en tiempo real.
 📋 Descripción
 
