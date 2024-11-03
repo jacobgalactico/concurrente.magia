@@ -1,6 +1,6 @@
 🔐 Ministerio de Magia - Backend de Gestión de Hechizos y Eventos
 
-Participantes: Jacob Altenburger Villar, Pablo Barbosa Ojeda, Assil, Augusto Perrone, Pedro Velasco
+Participantes: Jacob Altenburger Villar, Pablo Barbosa Ojeda, Assil Brika, Augusto Perrone, Pedro Velasco
 
 Link al repositorio: https://github.com/jacobgalactico/concurrente.magia
 
@@ -15,8 +15,17 @@ Además, el backend implementa autenticación y autorización mediante Spring Se
 El backend es el núcleo del sistema, encargado de procesar y gestionar todos los eventos generados. La arquitectura incluye:
 
     Spring Boot: Framework principal del backend.
-    Spring Security con JWT: Manejo de autenticación y autorización.
+    Spring Security con JWT: Manejo de autenticación y autorización.S
     @Async y ExecutorService: Para manejar la concurrencia en el procesamiento de datos.
     WebSocket: Para enviar notificaciones en tiempo real a los usuarios.
     PostgreSQL: Base de datos para almacenar los eventos y la información mágica.
     Spring Actuator: Para la monitorización del sistema.
+
+Frontend
+
+El frontend está construido en HTML, CSS y JavaScript. Las principales características son:
+
+    Interfaz de Juego: Contenedores para mostrar la vida, victorias, y hechizos disponibles de cada jugador.
+    Efectos Visuales: Animación de rayos y agitación de personajes al lanzar hechizos.
+    Lista de Hechizos: Los hechizos se muestran con colores cíclicos, y algunos aparecen bloqueados hasta cumplir los requisitos.
+    Controles: Botones para usar pócimas y activar hechizos en turnos alternados.
