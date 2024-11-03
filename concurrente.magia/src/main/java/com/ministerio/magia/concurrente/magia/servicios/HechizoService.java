@@ -52,8 +52,11 @@ public class HechizoService {
                 // Incrementar el contador de enemigos derrotados y el nivel si el oponente es derrotado
                 if (!personajeService.estaVivo(oponente)) {
                     personajeService.incrementarNivel(jugador);
+                    personajeService.incrementarDerrota(oponente);
+                    personajeService.incrementarPocima(jugador);
                     System.out.println("¡Jugador " + jugador + " ha derrotado a su oponente!");
                 }
+
             } else {
                 System.out.println("El hechizo ha fallado.");
             }

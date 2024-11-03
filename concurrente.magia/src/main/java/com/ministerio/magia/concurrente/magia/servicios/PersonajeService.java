@@ -11,6 +11,10 @@ public class PersonajeService {
     private int nivelJugador2 = 1;
     private int enemigosDerrotadosJugador1 = 0;
     private int enemigosDerrotadosJugador2 = 0;
+    private int derrotasJugador1 = 0;
+    private int derrotasJugador2 = 0;
+    private int pocimasJugador1 = 3;
+    private int pocimasJugador2 = 3;
 
     public int getVida(int jugador) {
         return jugador == 1 ? vidaJugador1 : vidaJugador2;
@@ -55,6 +59,38 @@ public class PersonajeService {
             if (enemigosDerrotadosJugador2 % 3 == 0) {
                 nivelJugador2++;
             }
+        }
+    }
+
+    public int getDerrotas(int jugador) {
+        return jugador == 1 ? derrotasJugador1 : derrotasJugador2;
+    }
+
+    public void incrementarDerrota(int jugador) {
+        if (jugador == 1) {
+            derrotasJugador1++;
+        } else {
+            derrotasJugador2++;
+        }
+    }
+
+    public int getPocimas(int jugador) {
+        return jugador == 1 ? pocimasJugador1 : pocimasJugador2;
+    }
+
+    public void usarPocima(int jugador) {
+        if (jugador == 1 && pocimasJugador1 > 0) {
+            pocimasJugador1--;
+        } else if (jugador == 2 && pocimasJugador2 > 0) {
+            pocimasJugador2--;
+        }
+    }
+
+    public void incrementarPocima(int jugador) {
+        if (jugador == 1) {
+            pocimasJugador1++;
+        } else {
+            pocimasJugador2++;
         }
     }
 }

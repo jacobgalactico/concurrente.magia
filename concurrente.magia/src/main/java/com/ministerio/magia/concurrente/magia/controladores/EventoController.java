@@ -2,6 +2,7 @@ package com.ministerio.magia.concurrente.magia.controladores;
 
 import com.ministerio.magia.concurrente.magia.modelos.EventoMagico;
 import com.ministerio.magia.concurrente.magia.servicios.EventoService;
+import com.ministerio.magia.concurrente.magia.servicios.PersonajeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,9 @@ public class EventoController {
 
     @Autowired
     private EventoService eventoService;
+
+    @Autowired
+    private PersonajeService personajeService;
 
     @PostMapping
     public EventoMagico registrarEvento(@RequestBody EventoMagico evento, @RequestParam String reportadoPor) {
@@ -28,5 +32,10 @@ public class EventoController {
     @GetMapping
     public List<EventoMagico> obtenerTodosEventos() {
         return eventoService.obtenerTodosEventos();
+    }
+
+    @GetMapping("/derrotas/{jugador}")
+    public int obtenerDerrotas(@PathVariable int jugador) {
+        return personajeService.getDerrotas(jugador);
     }
 }
