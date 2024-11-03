@@ -17,6 +17,7 @@
             justify-content: space-between;
             align-items: center;
             min-height: 100vh;
+            overflow: hidden;
         }
 
         .container {
@@ -71,6 +72,36 @@
             cursor: pointer;
         }
 
+        /* Estilo para el rayo */
+        .rayo {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+            transform: translateX(-50%);
+            opacity: 0;
+            animation: rayoAnimacion 0.5s ease-out forwards;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Animación de rayo */
+        @keyframes rayoAnimacion {
+            0% {
+                opacity: 1;
+                height: 0;
+            }
+            50% {
+                height: 100%;
+                opacity: 1;
+            }
+            100% {
+                height: 100%;
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -104,6 +135,9 @@
     <button class="boton-pocion" id="boton-pocion2" onclick="usarPocion(2)">Usar Pócima</button>
 </div>
 
+<!-- Contenedor para el rayo -->
+<div class="rayo" id="rayo"></div>
+
 <script>
     const hechizos1 = [
         { nombre: "Expelliarmus", tipo: "Defensivo", nivel: 2, desbloqueado: true },
@@ -113,12 +147,21 @@
         { nombre: "Avada Kedavra", tipo: "Ofensivo", nivel: 10, desbloqueado: false, victoriasNecesarias: 3 }
     ];
 
-    const hechizos2 = JSON.parse(JSON.stringify(hechizos1)); // Clona los hechizos para el segundo jugador
+    const hechizos2 = JSON.parse(JSON.stringify(hechizos1));
 
     let vida1 = 100, vida2 = 100;
     let victorias1 = 0, victorias2 = 0;
     let pocimas1 = 3, pocimas2 = 3;
     let turnoJugador = 1;
+
+    function mostrarRayo() {
+        const rayo = document.getElementById("rayo");
+        rayo.style.opacity = "1";
+        rayo.style.animation = "none"; // Reinicia la animación
+        setTimeout(() => {
+            rayo.style.animation = ""; // Vuelve a aplicar la animación
+        }, 10);
+    }
 
     function actualizarBarraDeVida(jugador) {
         const barra = document.getElementById("vida-barra" + jugador);
@@ -190,6 +233,9 @@
             return;
         }
 
+        // Mostrar el rayo en la pantalla
+        mostrarRayo();
+
         const daño = hechizo.nivel * 5;
         if (jugador === 1) vida2 -= daño;
         else vida1 -= daño;
@@ -202,11 +248,11 @@
         if (vida1 <= 0 || vida2 <= 0) {
             if (vida1 <= 0) {
                 victorias2++;
-                pocimas2++; // Añadir una pócima al jugador 2 por ganar
+                pocimas2++;
             }
             if (vida2 <= 0) {
                 victorias1++;
-                pocimas1++; // Añadir una pócima al jugador 1 por ganar
+                pocimas1++;
             }
 
             alert(`Jugador ${jugador} ha ganado!`);
