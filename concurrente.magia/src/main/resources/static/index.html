@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ministerio de Magia - Juego de Hechizos</title>
+    <style>
+        /* Estilo de fondo */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Contenedor principal */
+        .container {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        /* Barra de vida */
+        .vida-container {
+            margin-top: 20px;
+            width: 100%;
+            background-color: #444;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .vida-barra {
+            height: 20px;
+            background-color: #4caf50;
+            width: 100%; /* Inicialmente al 100% */
+            transition: width 0.5s;
+        }
+
+        /* Lista de hechizos */
+        .hechizos-lista {
+            list-style: none;
+            padding: 0;
+        }
+
+        .hechizos-lista li {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+
+        /* Botón de agregar hechizo */
+        .boton-agregar {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff6347;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .boton-agregar:hover {
+            background-color: #ff4500;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Bienvenido al Ministerio de Magia</h1>
+
+    <!-- Barra de vida -->
+    <h3>Vida del personaje</h3>
+    <div class="vida-container">
+        <div class="vida-barra" id="vida-barra"></div>
+    </div>
+    <p id="vida-restante">Vida: 100</p>
+
+    <!-- Lista de Hechizos -->
+    <h2>Lista de Hechizos</h2>
+    <ul class="hechizos-lista" id="hechizos-lista"></ul>
+    <button class="boton-agregar" onclick="agregarHechizo()">Añadir nuevo hechizo</button>
+</div>
+
+<script>
+    // Datos de ejemplo de hechizos
+    const hechizos = [
+        { nombre: "Expelliarmus", tipo: "Defensivo", nivel: 2 },
+        { nombre: "Expecto Patronum", tipo: "Defensivo", nivel: 5 },
+        { nombre: "Avada Kedavra", tipo: "Ofensivo", nivel: 10 }
+    ];
+
+    let vida = 100;
+
+    function actualizarBarraDeVida() {
+        const barra = document.getElementById("vida-barra");
+        const vidaRestante = document.getElementById("vida-restante");
+        barra.style.width = vida + "%";
+        vidaRestante.textContent = "Vida: " + vida;
+    }
+
+    function cargarHechizos() {
+        const lista = document.getElementById("hechizos-lista");
+        lista.innerHTML = "";
+
+        hechizos.forEach(hechizo => {
+            const item = document.createElement("li");
+            item.textContent = `${hechizo.nombre} - Tipo: ${hechizo.tipo} - Nivel: ${hechizo.nivel}`;
+            item.onclick = () => usarHechizo(hechizo);
+            lista.appendChild(item);
+        });
+    }
+
+    function usarHechizo(hechizo) {
+        const daño = hechizo.nivel * 5;
+        vida -= daño;
+        if (vida < 0) vida = 0;
+        actualizarBarraDeVida();
+
+        if (vida === 0) {
+            alert("El personaje ha sido derrotado.");
+        }
+    }
+
+    function agregarHechizo() {
+        const nombre = prompt("Nombre del hechizo:");
+        const tipo = prompt("Tipo de hechizo (Defensivo/Ofensivo):");
+        const nivel = prompt("Nivel de dificultad (1-10):");
+
+        if (nombre && tipo && nivel) {
+            hechizos.push({ nombre, tipo, nivel: parseInt(nivel) });
+            cargarHechizos();
+        } else {
+            alert("Por favor, completa todos los datos del hechizo.");
+        }
+    }
+
+    cargarHechizos();
+    actualizarBarraDeVida();
+</script>
+</body>
+</html>
