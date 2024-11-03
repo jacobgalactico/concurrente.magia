@@ -1,9 +1,13 @@
+// Colores cíclicos para los hechizos
+const hechizoColores = ["#33FF57", "#FFD700", "#FF5733", "#33B5FF", "#FF33FF"]; // Verde, amarillo, naranja, azul, morado
+
+// Definición de los hechizos con colores asignados cíclicamente
 const hechizos1 = [
-    { nombre: "Expelliarmus", tipo: "Defensivo", nivel: 2, desbloqueado: true, color: "#FF5733" }, // Naranja
-    { nombre: "Expecto Patronum", tipo: "Defensivo", nivel: 5, desbloqueado: true, color: "#33FFDD" }, // Turquesa
-    { nombre: "Sectumsempra", tipo: "Ofensivo", nivel: 6, desbloqueado: false, victoriasNecesarias: 1, color: "#FF33FF" }, // Morado
-    { nombre: "Crucio", tipo: "Ofensivo", nivel: 8, desbloqueado: false, victoriasNecesarias: 2, color: "#FF3333" }, // Rojo
-    { nombre: "Avada Kedavra", tipo: "Ofensivo", nivel: 10, desbloqueado: false, victoriasNecesarias: 3, color: "#33FF57" } // Verde
+    { nombre: "Expelliarmus", tipo: "Defensivo", nivel: 2, desbloqueado: true, color: hechizoColores[0 % hechizoColores.length] },
+    { nombre: "Expecto Patronum", tipo: "Defensivo", nivel: 5, desbloqueado: true, color: hechizoColores[1 % hechizoColores.length] },
+    { nombre: "Sectumsempra", tipo: "Ofensivo", nivel: 6, desbloqueado: false, victoriasNecesarias: 1, color: hechizoColores[2 % hechizoColores.length] },
+    { nombre: "Crucio", tipo: "Ofensivo", nivel: 8, desbloqueado: false, victoriasNecesarias: 2, color: hechizoColores[3 % hechizoColores.length] },
+    { nombre: "Avada Kedavra", tipo: "Ofensivo", nivel: 10, desbloqueado: false, victoriasNecesarias: 3, color: hechizoColores[4 % hechizoColores.length] }
 ];
 
 const hechizos2 = JSON.parse(JSON.stringify(hechizos1)); // Clona los hechizos para el segundo jugador
@@ -132,6 +136,5 @@ function actualizarPocimas() {
 
 cargarHechizos();
 actualizarBarraDeVida(1);
-actualizarBarraDeVida(2);
 actualizarVictorias();
 actualizarPocimas();
