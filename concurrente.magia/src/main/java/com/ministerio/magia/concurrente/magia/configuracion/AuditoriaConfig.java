@@ -1,17 +1,17 @@
 package com.ministerio.magia.concurrente.magia.configuracion;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Bean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AuditoriaConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuditoriaConfig.class);
-
     @Bean
-    public void configurarAuditoria() {
+    public Logger auditoriaLogger() {
+        Logger logger = LoggerFactory.getLogger("AuditoriaLogger");
         logger.info("Sistema de auditoría inicializado y configurado.");
+        return logger;
     }
 }
