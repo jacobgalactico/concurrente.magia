@@ -200,8 +200,14 @@
         turnoJugador = jugador === 1 ? 2 : 1;
 
         if (vida1 <= 0 || vida2 <= 0) {
-            if (vida1 <= 0) victorias2++;
-            if (vida2 <= 0) victorias1++;
+            if (vida1 <= 0) {
+                victorias2++;
+                pocimas2++; // Añadir una pócima al jugador 2 por ganar
+            }
+            if (vida2 <= 0) {
+                victorias1++;
+                pocimas1++; // Añadir una pócima al jugador 1 por ganar
+            }
 
             alert(`Jugador ${jugador} ha ganado!`);
             vida1 = 100;
