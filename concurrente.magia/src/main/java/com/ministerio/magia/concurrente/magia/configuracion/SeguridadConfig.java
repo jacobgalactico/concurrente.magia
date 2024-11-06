@@ -1,44 +1,53 @@
 package com.ministerio.magia.concurrente.magia.configuracion;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SeguridadConfig {
 
+    @Autowired
+    private com.ministerio.magia.concurrente.magia.seguridad.JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Autowired
+    private com.ministerio.magia.concurrente.magia.servicios.CustomUserDetailsService customUserDetailsService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/api/auth/**").permitAll() // Permitir el acceso sin autenticación a rutas de autenticación
                         .requestMatchers("/api/hechizos/**").hasRole("AUROR")
                         .requestMatchers("/api/eventos/**").hasRole("MINISTRO")
                         .anyRequest().authenticated()
                 )
-                .httpBasic(withDefaults -> {}); // Usa la configuración básica HTTP con el nuevo formato
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        // Agrega el filtro de JWT antes del filtro de autenticación de usuario/contraseña
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails auror = User.withUsername("auror")
-                .password("{noop}password") // "{noop}" indica que no se usará un codificador de contraseñas
-                .roles("AUROR")
-                .build();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
-        UserDetails ministro = User.withUsername("ministro")
-                .password("{noop}password")
-                .roles("MINISTRO")
-                .build();
-
-        return new InMemoryUserDetailsManager(auror, ministro);
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
